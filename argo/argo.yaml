@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sample-spring-kotlin
+spec:
+  destination:
+    name: ''
+    namespace: default
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: argo
+    repoURL: 'https://github.ibm.com/Prabhat-Kishor/tekton-practice.git'
+    targetRevision: HEAD
+  project: default
