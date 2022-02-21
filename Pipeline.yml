@@ -1,0 +1,55 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: sample-java
+spec:
+  params:
+    - name: image-tag
+      type: string
+      default: 'latest'
+  tasks:
+  - name: git-clone
+    params:
+      - name: url
+        value: 'https://github.com/piomin/sample-spring-kotlin-microservice.git'
+      - name: revision
+        value: master
+    taskRef:
+      kind: ClusterTask
+      name: git-clone
+    workspaces:
+      - name: output
+        workspace: source-dir
+
+  - name: junit-tests
+    params:
+      - name: GOALS
+        value:
+          - test
+    runAfter:
+      - git-clone
+    taskRef:
+      kind: ClusterTask
+      name: maven
+    workspaces:
+      - name: source
+        workspace: source-dir
+      - name: maven-settings
+        workspace: source-dir
+
+  - name: build-and-push-image
+    params:
+      - name: IMAGE
+        value: >-
+          image-registry.openshift-image-registry.svc:5000/default/sample-spring-kotlin:$(params.image-tag)
+    runAfter:
+      - junit-tests
+    taskRef:
+      kind: ClusterTask
+      name: jib-maven
+    workspaces:
+      - name: source
+        workspace: source-dir
+
+  workspaces:
+    - name: source-dir
