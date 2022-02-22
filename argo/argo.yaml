@@ -9,6 +9,6 @@ spec:
     server: 'https://kubernetes.default.svc'
   source:
     path: app
-    repoURL: 'https://github.ibm.com/Prabhat-Kishor/tekton-practice.git'
+    repoURL: 'https://github.com/kishorprabhat/tekton-practice.git'
     targetRevision: HEAD
   project: default
